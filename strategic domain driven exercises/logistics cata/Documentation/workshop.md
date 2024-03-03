@@ -103,8 +103,6 @@ You can use pen and paper or write in a text editor.
 Add properties to the concepts.
 
 
-
-
 ## Exercise 6.A Mini Event Storming (2 Persons)
 
 Imagine all the events that happens in the system. 
@@ -113,11 +111,27 @@ Try to make a sequence of events of what happens from a list of bookings are rec
 
 E.G. Bookings Received, Truck Assigned to transport, Goods offloaded at port. etc. 
 
-## Exercise 6.A Mini Event Storming (4 Persons)
+When done check our solution proposal [here](https://miro.com/app/board/uXjVNlnxyPE=/)
+
+## Exercise 6.B Mini Event Storming (4 Persons)
 
 Compare your event sequenses all together.
 
 
+## Excercise 7.A  Process Level event storming  4 persons
+
+Lets inttroduce the Blue and purple stickies
+
+- Blue A Command.
+- Purple A policy.
+
+
+We use the policy to say what we want to happen as a consequence of an incomming event. The polocy should create a command (A), The Command mutates state in our system and leads to production of a new event.
+
+Identify Events that should invoke a policy. Place a policy sticky after that event and also place a blue sticky for the command that the policy should create.
+
+When done check our solution proposal [here](https://miro.com/app/board/uXjVNlnxyPE=/)
+ 
 
 
 <H1 style="color:red"> Html Title </H1>
