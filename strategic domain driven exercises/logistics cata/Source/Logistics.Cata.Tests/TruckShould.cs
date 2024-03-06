@@ -4,12 +4,11 @@ using Cph.DDD.Meetup.Logistics.Domain;
 using FluentAssertions;
 using System.Runtime.InteropServices;
 
-public class AccountShould
+public class TruckShould
 {
-
     [Fact]
     public void Make_a_deposit() =>
-        State.Initial
+        TruckState.Initial
         .Decide( new Deposit( 5, DateTime.MinValue ) )
         .Should()
         .Equal( new Deposited( new( 5, DateTime.MinValue ) ).Singleton() );

@@ -11,13 +11,13 @@ using Events = IReadOnlyCollection<IEvent>;
 public record Transaction( decimal Amount, DateTime Date );
 
 // events
-public interface IEvent { } // used to mimic a discriminated union
+
 public record Deposited( Transaction Transaction ) : IEvent;
 public record Withdrawn( Transaction Transaction ) : IEvent;
 public record Closed( DateTime Date ) : IEvent;
 
 // commands
-public interface ICommand { }
+
 public record Deposit( decimal Amount, DateTime Date ) : ICommand;
 public record Withdraw( decimal Amount, DateTime Date ) : ICommand;
 public record Close( DateTime Date ) : ICommand;
@@ -73,8 +73,4 @@ public static class Decider
         events.Add( new Closed( c.Date ) );
         return events;
     }
-
-    // helpers
-
-    public static Events Singleton( this IEvent e ) => new IEvent[ 1 ] { e };
 }
