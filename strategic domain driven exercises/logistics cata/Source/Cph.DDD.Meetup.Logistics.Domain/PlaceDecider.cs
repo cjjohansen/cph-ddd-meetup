@@ -11,21 +11,22 @@ namespace Cph.DDD.Meetup.Logistics.Domain;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Events = IReadOnlyCollection<IEvent>;
 
+public record PlaceId(uint Id);
 
 // events
 public record ContainerLoaded( ContainerState Container, DateTime Date ) : IEvent;
 public record ContainerUnloaded( PlaceState Place, ContainerState Container, DateTime Date ) : IEvent;
-public record PlaceInitialized( string Name, List<ContainerState> Containers, IRoutingSource RoutingSource ) : IEvent;
+public record PlaceInitialized(PlaceId Id, string Name, List<ContainerState> Containers, IRoutingSource RoutingSource ) : IEvent;
 
 
 // commands
-public record Initialize( string Name, List<ContainerState> Containers, IRoutingSource RoutingSource ) : ICommand;
+public record Initialize(PlaceId Id, string Name, List<ContainerState> Containers, IRoutingSource RoutingSource ) : ICommand;
 public record LoadContainer(DateTime Date ) : ICommand;
 public record UnloadContainer( ContainerState Container, DateTime Date ) : ICommand;
 
-public record PlaceState(  string Name, List<ContainerState> Containers, IRoutingSource RoutingSource )
+public record PlaceState(PlaceId Id,  string Name, List<ContainerState> Containers, IRoutingSource RoutingSource )
 {
-    public static readonly PlaceState Initial = new( "Not Initialized", new List<ContainerState>(), new EmptyRoutingSource() );
+    public static readonly PlaceState Initial = new(new PlaceId(0), "Not Initialized", new List<ContainerState>(), new EmptyRoutingSource() );
 }
 
 public static class PlaceDecider
@@ -39,7 +40,7 @@ public static class PlaceDecider
         {
             case PlaceInitialized placeInitialized:
                 {
-                    return state with { Name = placeInitialized.Name,  Containers = placeInitialized.Containers, RoutingSource = placeInitialized.RoutingSource };
+                    return state with {Id = placeInitialized.Id, Name = placeInitialized.Name,  Containers = placeInitialized.Containers, RoutingSource = placeInitialized.RoutingSource };
                 }
 
             case ContainerLoaded containerLoaded:
@@ -83,12 +84,12 @@ public static class PlaceDecider
     {
         var events = new List<IEvent>();
 
-        var ( name, containers, routingSource ) = c;
+        var (id, name, containers, routingSource ) = c;
 
-        if(name is null || containers is null || routingSource is null)
+        if(id is null || name is null || containers is null || routingSource is null)
             return events;
 
-        return new PlaceInitialized(c.Name, c.Containers, c.RoutingSource).Singleton();
+        return new PlaceInitialized( id, name, containers, routingSource).Singleton();
     }
 
     private static Events LoadContainer(PlaceState state, LoadContainer c )

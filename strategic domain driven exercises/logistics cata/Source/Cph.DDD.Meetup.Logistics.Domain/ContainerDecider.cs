@@ -9,18 +9,22 @@ namespace Cph.DDD.Meetup.Logistics.Domain;
 
 using Events = IReadOnlyCollection<IEvent>;
 
+public record ContainerId( int Id );
+
 
 // events
 
-public record PlacedAt( Place Place, DateTime Date ) : IEvent;
+public record PlacedAt( PlaceState Place, DateTime Date ) : IEvent;
 
 // commands
 
-public record PlaceAt( Place Place, DateTime Date ) : ICommand;
+public record PlaceAt( PlaceState Place, DateTime Date ) : ICommand;
 
-public record ContainerState( Place Destination, Place CurrentLocation )
+public record ContainerState(ContainerId Id, PlaceState Destination, PlaceState CurrentLocation )
 {
-    public override string ToString() => this.IsAtDestination() ? "At destination" : $"Destined for {this.Destination.Name}, currently at {this.CurrentLocation.Name}";
+    public override string ToString() => this.IsAtDestination() ? $"Id {Id}, At destination" : $"Id {Id}, Destined for {this.Destination.Name}, currently at {this.CurrentLocation.Name}";
+
+    public static readonly ContainerState Initial = new( new ContainerId(0), PlaceState.Initial, PlaceState.Initial);
 }
 
 public static class ContainerDecider

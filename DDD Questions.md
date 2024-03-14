@@ -24,6 +24,7 @@
 21) "How to explain it to skeptics "​
 22) "How do you see Data Mesh architecture fit with Domain Driven design?"
 23) "how to reduce friction when someone unfamiliar with both a code base and DDD needs to begin working on one. "
+24) "Is ddd the same as just doing object oriented analysis and design?"
 
 
 

@@ -15,4 +15,9 @@ namespace Cph.DDD.Meetup.Logistics.Domain
         public static Events Singleton( this IEvent e ) => new IEvent[ 1 ] { e };
     }
 
+    public interface IClock
+    {
+        DateTime Time { get; }
+    }
+
 }
