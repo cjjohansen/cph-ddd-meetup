@@ -2,13 +2,13 @@
 {
     public interface IContainerStore
     {
-        RoutingInstructions LoadContainer();
+        FreightInstructions LoadContainer();
         void UnloadContainer(Container container);
     }
 
-    public class RoutingInstructions
+    public class FreightInstructions
     {
-        public RoutingInstructions(Container container, Route route)
+        public FreightInstructions(Container container, Route route)
         {
             this.Container = container;
             this.Route = route;

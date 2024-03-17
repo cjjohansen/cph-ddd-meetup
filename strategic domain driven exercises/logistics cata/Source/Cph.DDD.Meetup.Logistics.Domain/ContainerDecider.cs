@@ -3,28 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TransportTycoon;
+using Cph.DDD.Meetup.Logistics.Domain.Common;
 
 namespace Cph.DDD.Meetup.Logistics.Domain;
 
 using Events = IReadOnlyCollection<IEvent>;
 
-public record ContainerId( int Id );
+public record ContainerId( Guid Id );
+public record DestinationCode( string Code);
 
 
 // events
 
-public record PlacedAt( PlaceState Place, DateTime Date ) : IEvent;
+public record ContainerPlacedAt( ContainerStoreId ContainerStoreId, ContainerId ContainerId, DestinationCode Destination, DateTime timeStamp ) : IEvent;
 
 // commands
 
-public record PlaceAt( PlaceState Place, DateTime Date ) : ICommand;
+public record PlaceContainerAt( ContainerId ContainerId, ContainerStoreId ContainerStoreId, DestinationCode Destination, IClock Clock ) : ICommand;
 
-public record ContainerState(ContainerId Id, PlaceState Destination, PlaceState CurrentLocation )
+public record ContainerState(ContainerId Id, ContainerStoreId Destination, ContainerStoreId CurrentLocation )
 {
-    public override string ToString() => this.IsAtDestination() ? $"Id {Id}, At destination" : $"Id {Id}, Destined for {this.Destination.Name}, currently at {this.CurrentLocation.Name}";
+    public override string ToString() => this.IsAtDestination() ? $"Id {Id}, At destination" : $"Id {Id}, Destined for {this.Destination.Id}, currently at {this.CurrentLocation.Id}";
 
-    public static readonly ContainerState Initial = new( new ContainerId(0), PlaceState.Initial, PlaceState.Initial);
+    public static readonly ContainerState Initial = new( new ContainerId(Guid.Empty), new ContainerStoreId(Guid.Empty), new ContainerStoreId(Guid.Empty));
 }
 
 public static class ContainerDecider
@@ -34,7 +35,7 @@ public static class ContainerDecider
     private static ContainerState Evolve( ContainerState state, IEvent @event ) =>
         @event switch
         {
-            PlacedAt placedAt => state with { CurrentLocation = placedAt.Place },
+            ContainerPlacedAt placedAt => state with { CurrentLocation = placedAt.ContainerStoreId },
             _ => state
         };
 
@@ -48,10 +49,10 @@ public static class ContainerDecider
     public static Events Decide( this ContainerState state, ICommand command ) =>
         command switch
         {
-            PlaceAt c => PlaceAt( c ),
+            PlaceContainerAt c => PlaceAt( c ),
             _ => throw new NotImplementedException()
         };
 
-    private static Events PlaceAt( PlaceAt c ) =>
-        new PlacedAt( c.Place , c.Date ).Singleton();
+    private static Events PlaceAt( PlaceContainerAt c ) =>
+        new ContainerPlacedAt( c.ContainerStoreId, c.ContainerId, c.Destination, c.Clock.Time ).Singleton();
 }

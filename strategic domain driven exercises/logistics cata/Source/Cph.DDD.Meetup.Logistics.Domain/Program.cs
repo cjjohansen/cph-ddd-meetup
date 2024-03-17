@@ -1,6 +1,5 @@
-﻿using System.Linq;
-
-namespace TransportTycoon
+﻿
+namespace Cph.DDD.Meetup.Logistics.Domain
 {
     class Program
     {
@@ -8,7 +7,7 @@ namespace TransportTycoon
         {
             var destinations = args[0];
 
-            var world = new World(destinations.Select(x => x.ToString()));
+            var world = new World2(destinations.Select(x => x.ToString()));
         }
     }
 }

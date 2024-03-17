@@ -3,18 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Cph.DDD.Meetup.Logistics.Domain.Common;
 
 namespace Cph.DDD.Meetup.Logistics.Domain;
 
 using Events = IReadOnlyCollection<IEvent>;
 
+public interface IAccountEvent: IEvent
+{
+
+}
+
 public record Transaction( decimal Amount, DateTime Date );
 
 // events
 
-public record Deposited( Transaction Transaction ) : IEvent;
-public record Withdrawn( Transaction Transaction ) : IEvent;
-public record Closed( DateTime Date ) : IEvent;
+public record Deposited( Transaction Transaction ) : IAccountEvent;
+public record Withdrawn( Transaction Transaction ) : IAccountEvent;
+public record Closed( DateTime Date ) : IAccountEvent;
 
 // commands
 
@@ -40,10 +46,10 @@ public static class Decider
             _ => state
         };
 
-    public static State Fold( this IEnumerable<IEvent> history, State state ) =>
+    public static State Fold( this IEnumerable<IAccountEvent> history, State state ) =>
         history.Aggregate( state, Evolve );
 
-    public static State Fold( this IEnumerable<IEvent> history ) =>
+    public static State Fold( this IEnumerable<IAccountEvent> history ) =>
         history.Fold( State.Initial );
 
     public static bool IsTerminal( this State state ) => state.IsClosed;

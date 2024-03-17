@@ -4,43 +4,43 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TransportTycoon;
+using Cph.DDD.Meetup.Logistics.Domain.Common;
 
 namespace Cph.DDD.Meetup.Logistics.Domain;
 
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using Events = IReadOnlyCollection<IEvent>;
 
-public record PlaceId(uint Id);
+public record ContainerStoreId(Guid Id);
 
 // events
 public record ContainerLoaded( ContainerState Container, DateTime Date ) : IEvent;
-public record ContainerUnloaded( PlaceState Place, ContainerState Container, DateTime Date ) : IEvent;
-public record PlaceInitialized(PlaceId Id, string Name, List<ContainerState> Containers, IRoutingSource RoutingSource ) : IEvent;
+public record ContainerUnloaded( ContainerStore ContainerStore, ContainerState Container, DateTime Date ) : IEvent;
+public record ContainerStoreInitialized( ContainerStoreId Id, FreightLocationId FreightLocationId, string Name, ISet<ContainerState> Containers ) : IEvent;
 
 
 // commands
-public record Initialize(PlaceId Id, string Name, List<ContainerState> Containers, IRoutingSource RoutingSource ) : ICommand;
+public record Initialize(ContainerStoreId Id, FreightLocationId FreightLocationId, string Name, ISet<ContainerState> Containers ) : ICommand;
 public record LoadContainer(DateTime Date ) : ICommand;
 public record UnloadContainer( ContainerState Container, DateTime Date ) : ICommand;
 
-public record PlaceState(PlaceId Id,  string Name, List<ContainerState> Containers, IRoutingSource RoutingSource )
+public record ContainerStore(ContainerStoreId Id, FreightLocation Location, ISet<ContainerState> Containers)
 {
-    public static readonly PlaceState Initial = new(new PlaceId(0), "Not Initialized", new List<ContainerState>(), new EmptyRoutingSource() );
+    public static readonly ContainerStore Initial = new(new ContainerStoreId(Guid.Empty), FreightLocation.EmptyFreightLocation , new HashSet<ContainerState>() );
 }
 
-public static class PlaceDecider
+public static class ContainerStoreDecider
 {
 
     // handle state
 
-    private static PlaceState Evolve( PlaceState state, IEvent @event )
+    private static ContainerStore Evolve( ContainerStore state, IEvent @event )
     {
         switch ( @event )
         {
-            case PlaceInitialized placeInitialized:
+            case ContainerStoreInitialized initialized:
                 {
-                    return state with {Id = placeInitialized.Id, Name = placeInitialized.Name,  Containers = placeInitialized.Containers, RoutingSource = placeInitialized.RoutingSource };
+                    return state with {Id = initialized.Id, Location = new FreightLocation( initialized.FreightLocationId, initialized.Name),  Containers = initialized.Containers };
                 }
 
             case ContainerLoaded containerLoaded:
@@ -60,16 +60,16 @@ public static class PlaceDecider
         };
     }
 
-    public static PlaceState Fold( this IEnumerable<IEvent> history, PlaceState state ) =>
+    public static ContainerStore Fold( this IEnumerable<IEvent> history, ContainerStore state ) =>
         history.Aggregate( state, Evolve );
 
-    public static PlaceState Fold( this IEnumerable<IEvent> history ) =>
-        history.Fold( PlaceState.Initial );
+    public static ContainerStore Fold( this IEnumerable<IEvent> history ) =>
+        history.Fold( ContainerStore.Initial );
 
 
     // handle commands
 
-    public static Events Decide( this PlaceState state, ICommand command ) =>
+    public static Events Decide( this ContainerStore state, ICommand command ) =>
         command switch
         {
             Initialize c => Initialize( c ),
@@ -84,25 +84,25 @@ public static class PlaceDecider
     {
         var events = new List<IEvent>();
 
-        var (id, name, containers, routingSource ) = c;
+        var (id, locationId, name, containers) = c;
 
-        if(id is null || name is null || containers is null || routingSource is null)
+        if(id is null || name is null || containers is null)
             return events;
 
-        return new PlaceInitialized( id, name, containers, routingSource).Singleton();
+        return new ContainerStoreInitialized( id, locationId, name, containers ).Singleton();
     }
 
-    private static Events LoadContainer(PlaceState state, LoadContainer c )
+    private static Events LoadContainer(ContainerStore state, LoadContainer c )
     {
         if ( state.Containers.Count == 0 )
             return new ReadOnlyCollection<IEvent>( new List<IEvent>() );
 
-        var container = state.Containers[ 0 ];
+        var container = state.Containers.GetEnumerator().Current;
        
         return new ContainerLoaded(container, c.Date  ).Singleton();
     }
 
-    private static Events UnloadContainer( PlaceState state, UnloadContainer c )
+    private static Events UnloadContainer( ContainerStore state, UnloadContainer c )
     {
          return new ContainerUnloaded(state, c.Container, c.Date ).Singleton();
     }

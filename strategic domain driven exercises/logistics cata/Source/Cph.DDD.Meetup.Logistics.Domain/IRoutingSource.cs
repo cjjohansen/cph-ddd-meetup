@@ -2,13 +2,13 @@
 {
     public interface IRoutingSource
     {
-        Route FindRoute(Place currentLocation, Place destination);
+        Route FindRoute( FreightLocation currentLocation, FreightLocation destination );
     }
 
 
     public class EmptyRoutingSource : IRoutingSource
     {
-        public Route FindRoute( Place currentLocation, Place destination )
+        public Route FindRoute( FreightLocation currentLocation, FreightLocation destination )
         {
             throw new NotImplementedException();
         }

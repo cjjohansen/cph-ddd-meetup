@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TransportTycoon;
+using Cph.DDD.Meetup.Logistics.Domain.Common;
 
 namespace Cph.DDD.Meetup.Logistics.Domain;
 
