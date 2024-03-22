@@ -12,12 +12,22 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentat
 		workshop.md = workshop.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cph.DDD.Meetup.Logistics.Domain.Tests", "Logistics.Cata.Tests\Cph.DDD.Meetup.Logistics.Domain.Tests.csproj", "{FAAAE37F-3CE6-42F2-BCDF-A38505D869D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cph.DDD.Meetup.Logistics.Domain.Tests", "Logistics.Cata.Tests\Cph.DDD.Meetup.Logistics.Domain.Tests.csproj", "{FAAAE37F-3CE6-42F2-BCDF-A38505D869D9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Assets", "Assets", "{80E3573D-F0EE-48F5-B50E-C1AD0D9630F4}"
 	ProjectSection(SolutionItems) = preProject
 		..\Documentation\Assets\Nasa-Mars-Mobile-Android-optimized_preview.mp4 = ..\Documentation\Assets\Nasa-Mars-Mobile-Android-optimized_preview.mp4
 		..\Documentation\Assets\simple-logistics-domain.png = ..\Documentation\Assets\simple-logistics-domain.png
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker", "Docker", "{FF61D39B-68A2-441B-9FE2-8AD1C8FFEC9E}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6BFE588B-0D8B-4E56-BD7E-DCF029593DDB}"
+	ProjectSection(SolutionItems) = preProject
+		ReadMe.md = ReadMe.md
 	EndProjectSection
 EndProject
 Global
@@ -42,6 +52,7 @@ Global
 		{E5A1F80A-C812-41EE-A910-208957C7AF5D} = {BB0E21FB-DDFD-4326-B01A-B0D11ED64E0E}
 		{FAAAE37F-3CE6-42F2-BCDF-A38505D869D9} = {BB0E21FB-DDFD-4326-B01A-B0D11ED64E0E}
 		{80E3573D-F0EE-48F5-B50E-C1AD0D9630F4} = {6BE34015-6013-4569-A705-6F60263B99FC}
+		{FF61D39B-68A2-441B-9FE2-8AD1C8FFEC9E} = {BB0E21FB-DDFD-4326-B01A-B0D11ED64E0E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BEC00B3A-2B34-4B8C-9E63-B8D311959823}

@@ -14,15 +14,16 @@ using Events = IReadOnlyCollection<IEvent>;
 public record ContainerStoreId(Guid Id);
 
 // events
-public record ContainerLoaded( ContainerState Container, DateTime Date ) : IEvent;
-public record ContainerUnloaded( ContainerStore ContainerStore, ContainerState Container, DateTime Date ) : IEvent;
+
+public record ContainerLoadedFrom( ContainerState Container, DateTime Date ) : IEvent;
+public record ContainerUnloadedAt( ContainerStoreId CurrentLocationId, ContainerId ContainerId, ContainerStoreId DestinationId, DateTime Date ) : IEvent;
 public record ContainerStoreInitialized( ContainerStoreId Id, FreightLocationId FreightLocationId, string Name, ISet<ContainerState> Containers ) : IEvent;
 
 
 // commands
 public record Initialize(ContainerStoreId Id, FreightLocationId FreightLocationId, string Name, ISet<ContainerState> Containers ) : ICommand;
-public record LoadContainer(DateTime Date ) : ICommand;
-public record UnloadContainer( ContainerState Container, DateTime Date ) : ICommand;
+public record LoadContainerFrom(DateTime Date ) : ICommand;
+public record UnloadContainerAt( ContainerState Container, DateTime Date ) : ICommand;
 
 public record ContainerStore(ContainerStoreId Id, FreightLocation Location, ISet<ContainerState> Containers)
 {
@@ -43,16 +44,18 @@ public static class ContainerStoreDecider
                     return state with {Id = initialized.Id, Location = new FreightLocation( initialized.FreightLocationId, initialized.Name),  Containers = initialized.Containers };
                 }
 
-            case ContainerLoaded containerLoaded:
+            case ContainerLoadedFrom containerLoaded:
                 {
                     var containers = state.Containers;
-                    containers.Add( containerLoaded.Container );
+                    containers.Remove( containerLoaded.Container );
                     return state with { Containers = containers };
                 }
-            case ContainerUnloaded containerUnloaded:
+            case ContainerUnloadedAt containerUnloaded:
                 {
                     var containers = state.Containers;
-                    containers.Remove( containerUnloaded.Container );
+
+                    containers.Add( new ContainerState( containerUnloaded.ContainerId,containerUnloaded.DestinationId, state.Id ) );
+
                     return state with { Containers = containers };
                 }
             default:
@@ -73,8 +76,8 @@ public static class ContainerStoreDecider
         command switch
         {
             Initialize c => Initialize( c ),
-            LoadContainer c => LoadContainer( state, c ),
-            UnloadContainer c => UnloadContainer( state, c ),
+            LoadContainerFrom c => LoadContainerFrom( state, c ),
+            UnloadContainerAt c => UnloadContainerAt( state, c ),
 
             _ => throw new NotImplementedException()
         };
@@ -92,19 +95,19 @@ public static class ContainerStoreDecider
         return new ContainerStoreInitialized( id, locationId, name, containers ).Singleton();
     }
 
-    private static Events LoadContainer(ContainerStore state, LoadContainer c )
+    private static Events LoadContainerFrom(ContainerStore state, LoadContainerFrom c )
     {
         if ( state.Containers.Count == 0 )
             return new ReadOnlyCollection<IEvent>( new List<IEvent>() );
 
         var container = state.Containers.GetEnumerator().Current;
        
-        return new ContainerLoaded(container, c.Date  ).Singleton();
+        return new ContainerLoadedFrom(container, c.Date  ).Singleton();
     }
 
-    private static Events UnloadContainer( ContainerStore state, UnloadContainer c )
+    private static Events UnloadContainerAt( ContainerStore state, UnloadContainerAt c )
     {
-         return new ContainerUnloaded(state, c.Container, c.Date ).Singleton();
+         return new ContainerUnloadedAt(state.Id, c.Container.Id, c.Container.Destination, c.Date ).Singleton();
     }
   
 }

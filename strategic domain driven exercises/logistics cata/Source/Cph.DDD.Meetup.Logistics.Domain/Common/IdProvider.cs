@@ -2,7 +2,7 @@
 {
     public class IdProvider 
     {
-        struct IdCounter
+        class IdCounter
         {
             public IdCounter(int seriesNumber, int currentCounter)
             {
@@ -40,10 +40,20 @@
 
             var idCounter = idDictionary[ type ];
 
+
+            
+
             var id= Guid.Parse( $"{idCounter.SeriesNumber.ToString( "X8" )}-0000-0000-0000-{idCounter.CurrentNumber.ToString( "X12" )}" );
-            idCounter.CurrentNumber++;
+            //idCounter.CurrentNumber++;
+
+            idDictionary[ type ].CurrentNumber++;
 
             return id;
+        }
+
+        public static void Clear()
+        {
+            idDictionary.Clear();
         }
     }
 

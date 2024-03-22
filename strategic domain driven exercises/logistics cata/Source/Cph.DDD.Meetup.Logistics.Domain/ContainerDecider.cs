@@ -23,7 +23,7 @@ public record PlaceContainerAt( ContainerId ContainerId, ContainerStoreId Contai
 
 public record ContainerState(ContainerId Id, ContainerStoreId Destination, ContainerStoreId CurrentLocation )
 {
-    public override string ToString() => this.IsAtDestination() ? $"Id {Id}, At destination" : $"Id {Id}, Destined for {this.Destination.Id}, currently at {this.CurrentLocation.Id}";
+    public override string ToString() => this.IsAtDestination() ? $"Id {Id}, At destination" : $"Id {CurrentLocation.Id}, Destined for {this.Destination.Id}, currently at {this.CurrentLocation.Id}";
 
     public static readonly ContainerState Initial = new( new ContainerId(Guid.Empty), new ContainerStoreId(Guid.Empty), new ContainerStoreId(Guid.Empty));
 }

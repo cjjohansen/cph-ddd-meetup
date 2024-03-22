@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Marten;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Cph.DDD.Meetup.Logistics.Domain.Tests
 {
@@ -19,9 +20,13 @@ namespace Cph.DDD.Meetup.Logistics.Domain.Tests
                 "PORT = 5432; HOST = localhost; TIMEOUT = 15; POOLING = True; DATABASE = 'postgres'; PASSWORD = 'Password12!'; USER ID = 'postgres'" );
             options.UseDefaultSerialization( nonPublicMembersStorage: NonPublicMembersStorage.All );
             options.DatabaseSchemaName = options.Events.DatabaseSchemaName = "IntroductionToEventSourcing";
+            options.Events.AddEventType<ContainerUnloadedAt>();
 
             documentStore = new DocumentStore( options );
             DocumentSession = documentStore.LightweightSession();
+
+            documentStore.Advanced.Clean.CompletelyRemoveAll();
+
         }
 
         protected Task AppendEvents( Guid streamId, object[] events, CancellationToken ct )
