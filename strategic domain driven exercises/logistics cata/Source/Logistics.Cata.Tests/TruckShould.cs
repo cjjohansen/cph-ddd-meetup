@@ -1,8 +1,4 @@
 namespace Cph.DDD.Meetup.Logistics.Domain.Tests;
-
-using Cph.DDD.Meetup.Logistics.Domain;
-using Cph.DDD.Meetup.Logistics.Domain.Common;
-using FluentAssertions;
 using System.Runtime.InteropServices;
 
 public class TruckShould

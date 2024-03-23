@@ -6,16 +6,12 @@ namespace Cph.DDD.Meetup.Logistics.Domain.Tests
 {
     public class GettingStateFromEventsTests : MartenTest
     {
-
-
-
         public GettingStateFromEventsTests()
         {
 
             IdProvider.Clear();
 
         }
-
 
         /// <summary>
         /// Solution - Immutable entity
@@ -48,7 +44,7 @@ namespace Cph.DDD.Meetup.Logistics.Domain.Tests
 
         [Fact]
         [Trait( "Category", "SkipCI" )]
-        public async Task GettingState_ForSequenceOfEvents_ShouldSucceed()
+        public async Task Getting_ContainerStore_State_ForSequenceOfEvents_ShouldSucceed()
         {
             var factoryId = new ContainerStoreId(IdProvider.GetNextId(typeof(ContainerStoreId)));
 
