@@ -1,0 +1,72 @@
+﻿@page "/"
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+@inject IJSRuntime JSRuntime
+
+
+<div class="scrollable-timeline">
+    <MudTimeline TimelineOrientation="TimelineOrientation.Vertical" Align="TimelineAlign.Alternate">
+        @foreach (var @event in events)
+        {
+            <MudTimelineItem Elevation="11" Icon="" Variant="Variant.Outlined" Color="Color.Primary">
+                <ItemContent>
+                    
+                    <MudAlert Elevation="11" Severity="Severity.Info" NoIcon="true">
+                        <MudText Typo="Typo.h6">@(@event.Name)</MudText>
+                 
+                    @((MarkupString)FormatJson(@event.SerializedValue))
+</MudAlert>
+                </ItemContent>
+                <ItemOpposite>
+                    <MudText Color="Color.Info">@(@event.Timestamp.ToString("T"))</MudText>
+                </ItemOpposite>
+            </MudTimelineItem>
+        }
+    </MudTimeline>
+</div>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/obsidian.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/languages/json.min.js"></script>
+
+<script>
+  
+         window.highlightJson = function() {
+                 hljs.highlightAll();
+             }
+</script>
+
+<style>
+        .language-json {
+           /*background-color: var(--mud-palette-dark-lighten) !important;*/
+                background-color: transparent !important;
+            }
+</style>
+
+@code {
+    private readonly List<(string Name, string SerializedValue, DateTime Timestamp)> events = new();
+    private string FormatJson(string json)
+    {
+        var parsedJson = JToken.Parse(json);
+        var formattedJson = parsedJson.ToString(Formatting.Indented);
+        return $"<pre class='json-output'><code class='json'>{formattedJson}</code></pre>";
+    }
+
+    protected override void OnInitialized()
+    {
+        PubSubEvent.Subscribe(evt =>
+        {
+            InvokeAsync(() =>
+            {
+                events.Add((evt.GetType().Name, JsonConvert.SerializeObject(evt), DateTime.Now));
+                StateHasChanged();
+
+                if (Scroller.ScrollToBottom)
+                    JSRuntime.InvokeVoidAsync("scrollToBottom");
+                
+                JSRuntime.InvokeVoidAsync("highlightJson");
+            });
+        });
+    }
+
+}
