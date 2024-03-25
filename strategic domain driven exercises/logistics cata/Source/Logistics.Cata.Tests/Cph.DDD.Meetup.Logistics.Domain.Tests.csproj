@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Cph.DDD.Meetup.Logistics.Domain\Cph.DDD.Meetup.Logistics.Domain.csproj" />
+    <ProjectReference Include="..\Tools\Tools.csproj" />
   </ItemGroup>
 
   <ItemGroup>

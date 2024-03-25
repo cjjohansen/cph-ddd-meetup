@@ -22,10 +22,16 @@ namespace Cph.DDD.Meetup.Logistics.Domain.Tests
             options.DatabaseSchemaName = options.Events.DatabaseSchemaName = "IntroductionToEventSourcing";
             options.Events.AddEventType<ContainerUnloadedAt>();
 
+
+            
+
+
             documentStore = new DocumentStore( options );
             DocumentSession = documentStore.LightweightSession();
 
             documentStore.Advanced.Clean.CompletelyRemoveAll();
+
+
 
         }
 
