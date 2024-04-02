@@ -24,7 +24,7 @@ public class AccountShould
 
     [Fact]
     public void Close_the_account_and_withdraw_the_remaining_amount() =>
-        new IEvent[]
+        new IAccountEvent[]
         {
             new Deposited(new(5, DateTime.MinValue)),
             new Deposited(new(5, DateTime.MinValue))
